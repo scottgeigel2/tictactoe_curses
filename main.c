@@ -160,7 +160,6 @@ void print_board(int coord)
 	int x,y;
 	int idx_base;
 
-	cls();
 	puts("\033[2;1H");
 	for (i = 0; i < 13; i++)
 	{
@@ -190,11 +189,17 @@ void print_board(int coord)
 			y += 4;
 		}
 	}
+}
 
+
+void print_message(const char* message)
+{
+	const int x = 0;
+	const int y = 20;
+	printf("\033[%d;%dH%s", y, x, message);	
 }
 
 int main () {
-//
 	char debug_last_read = 0;
 	bool game_over = false;
 	int x = 0;
@@ -205,6 +210,8 @@ int main () {
 		int coord = (y * 3) + x;
 		cls();
 		print_board(coord);
+		print_message(player? "O's Turn" : "X's Turn");
+
 player_input:
 		char c = read_char();
 		debug_last_read = c;
@@ -258,19 +265,18 @@ player_input:
 
 		if (status >= 0)
 		{
-			cls();
 			game_over = true;
 		}
 		switch (status) 
 		{
 			case 2:
-				printf("Draw\n");
+				print_message("Draw\n");
 				break;
 			case 1:
-				printf("O wins\n");
+				print_message("O wins\n");
 				break;
 			case 0:
-				printf("X wins\n");
+				print_message("X wins\n");
 				break;
 			default:
 				break;
