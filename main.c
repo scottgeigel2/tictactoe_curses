@@ -5,14 +5,14 @@
 
 const char X_Tile[3][12] = {
 {"\\   / "}, // \   /
-{" | |"},    //  | |  
+{" | |  "},  //  | |  
 {"/   \\ "}  // /   \
 // this line intentionally left blank
 };
 
 const char O_Tile[4][12] = {
 {"/ - \\"},  // / - \ .
-{"|   |"}, // |   |
+{"|   |"},   // |   |
 {"\\ - /"}   // \ - /
 };
 
@@ -92,6 +92,68 @@ void print_tile(int x, int y, const char tile[3][12], bool invert)
 	}
 
 }
+
+
+bool tile_available(int coord)
+{
+	if (coord >= 0 && coord < 10)
+	{
+		return board[coord] == ' ';
+	}
+	return false;
+}
+
+void place_tile(int coord, int player)
+{
+	board[coord] = player? 'O' : 'X';
+}
+
+int is_winner(){
+    // Winning combinations
+    int winning_combinations[8][3] = {
+        {0, 1, 2}, // Row 1
+        {3, 4, 5}, // Row 2
+        {6, 7, 8}, // Row 3
+        {0, 3, 6}, // Column 1
+        {1, 4, 7}, // Column 2
+        {2, 5, 8}, // Column 3
+        {0, 4, 8}, // Diagonal 1
+        {2, 4, 6}  // Diagonal 2
+    };
+
+    // Check for a winner
+    for (int i = 0; i < 8; i++)
+    {
+        int a = winning_combinations[i][0];
+        int b = winning_combinations[i][1];
+        int c = winning_combinations[i][2];
+
+        if (board[a] != ' ' && board[a] == board[b] && board[b] == board[c])
+        {
+            return board[a] == 'O' ? 1 : 0; // 1 for 'O', 0 for 'X'
+        }
+    }
+
+    // Check for stalemate
+    bool is_stalemate = true;
+    for (int i = 0; i < 9; i++)
+    {
+        if (board[i] == ' ')
+        {
+            is_stalemate = false;
+            break;
+        }
+    }
+
+    if (is_stalemate)
+    {
+        return 2; // Stalemate
+    }
+
+    return -1; // No winner yet
+}
+
+
 void print_board(int coord)
 {
 	int i,j,k,l;
@@ -137,6 +199,7 @@ int main () {
 	bool game_over = false;
 	int x = 0;
 	int y = 0;
+	int player = 0;
 	while (!game_over)
 	{
 		int coord = (y * 3) + x;
@@ -178,10 +241,40 @@ player_input:
 			}
 			x--;
 		}
-	}
+		if (c == ' '  )
+		{
+			if (tile_available(coord))
+			{
+				place_tile(coord, player);
+				player = (player + 1) % 2;
+			}
+			else 
+			{
+				goto player_input;
+			}
+		}
 
-	cls();
-	board[0] = board[2] = board[7] = 'X';
-	board[1] = board[3] = board[6] = 'O';
-	print_board(0);
+		int status = is_winner();
+
+		if (status >= 0)
+		{
+			cls();
+			game_over = true;
+		}
+		switch (status) 
+		{
+			case 2:
+				printf("Draw\n");
+				break;
+			case 1:
+				printf("O wins\n");
+				break;
+			case 0:
+				printf("X wins\n");
+				break;
+			default:
+				break;
+		}
+
+	}
 }
