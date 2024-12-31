@@ -45,10 +45,9 @@ const char Board_gfx[16][43] = {
 
 char board[9] = "         ";
 
-char read_char()
+struct termios set_no_echo()
 {
 	struct termios oldt, newt;
-	char ch;
 
 	// Get current terminal attributes
 	tcgetattr(STDIN_FILENO, &oldt);
@@ -58,12 +57,19 @@ char read_char()
 	newt.c_lflag &= ~(ICANON | ECHO);
 	tcsetattr(STDIN_FILENO, TCSANOW, &newt);
 
-	// Read a single character
-	ch = getchar();
+	return oldt;
+}
 
+void clear_no_echo(struct termios* oldt)
+{
 	// Restore old terminal attributes
-	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+	tcsetattr(STDIN_FILENO, TCSANOW, oldt);
+}
 
+char read_char()
+{
+	// Read a single character
+	char ch = getchar();
 	return ch;
 }
 
@@ -205,6 +211,7 @@ int main () {
 	int x = 0;
 	int y = 0;
 	int player = 0;
+	struct termios backup = set_no_echo();
 	while (!game_over)
 	{
 		int coord = (y * 3) + x;
@@ -283,4 +290,5 @@ player_input:
 		}
 
 	}
+	clear_no_echo(&backup);
 }
