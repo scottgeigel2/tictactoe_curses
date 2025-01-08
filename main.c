@@ -1,102 +1,10 @@
 #include <stdio.h>
 #include <stdbool.h>
-#include <termios.h>
-#include <unistd.h>
-
-const char X_Tile[3][12] = {
-{"\\   / "}, // \   /
-{" | |  "},  //  | |  
-{"/   \\ "}  // /   \
-// this line intentionally left blank
-};
-
-const char O_Tile[4][12] = {
-{"/ - \\"},  // / - \ .
-{"|   |"},   // |   |
-{"\\ - /"}   // \ - /
-};
-
-const char Empty_Tile[3][12] = {
-{"......"},
-{"......"},
-{"......"}
-};
-
-
-const char Board_gfx[16][41] = {
-{"            ||            ||           "},
-{"            ||            ||           "},
-{"            ||            ||           "},
-{"____________||____________||___________"},
-{"____________||____________||___________"},
-{"            ||            ||           "},
-{"            ||            ||           "},
-{"            ||            ||           "},
-{"____________||____________||___________"},
-{"____________||____________||___________"},
-{"            ||            ||           "},
-{"            ||            ||           "},
-{"            ||            ||           "},
-{"            ||            ||           "},
-
-};
-
-char board[9] = "         ";
-
-struct termios set_no_echo()
+#include "tui.h"
+void place_tile(int coord, int player)
 {
-	struct termios oldt, newt;
-
-	// Get current terminal attributes
-	tcgetattr(STDIN_FILENO, &oldt);
-	newt = oldt;
-
-	// Disable canonical mode and echo
-	newt.c_lflag &= ~(ICANON | ECHO);
-	tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-
-	return oldt;
+	board[coord] = player? 'O' : 'X';
 }
-
-void clear_no_echo(struct termios* oldt)
-{
-	// Restore old terminal attributes
-	tcsetattr(STDIN_FILENO, TCSANOW, oldt);
-}
-
-char read_char()
-{
-	// Read a single character
-	char ch = getchar();
-	return ch;
-}
-
-void cls()
-{
-	puts("\033[2J\033[H"); // clear screen
-}
-
-void print_tile(int x, int y, const char tile[3][12], bool invert)
-{
-	if (invert) 
-	{
-		printf("\033[7m");
-	}
-
-	for (int i = 0; i < 3; i++)
-	{
-	
-		printf("\033[%d;%dH%s", y, x, tile[i]);	
-		y++;
-	}
-
-	if (invert)
-	{
-		printf("\033[0m");
-	}
-
-}
-
 
 bool tile_available(int coord)
 {
@@ -105,11 +13,6 @@ bool tile_available(int coord)
 		return board[coord] == ' ';
 	}
 	return false;
-}
-
-void place_tile(int coord, int player)
-{
-	board[coord] = player? 'O' : 'X';
 }
 
 int is_winner(){
@@ -213,7 +116,7 @@ int main () {
 	while (!game_over)
 	{
 		int coord = (y * 3) + x;
-		cls();
+		tui_cls();
 		print_board(coord);
 		print_message(player? "O's Turn" : "X's Turn");
 
