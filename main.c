@@ -80,6 +80,8 @@ int main() {
 
     if (status >= 0) {
       game_over = true;
+      tui_cls();
+      tui_print_board(tui_NOT_A_COORD, &board);
     }
     switch (status) {
     case 2:

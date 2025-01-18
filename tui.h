@@ -2,6 +2,7 @@
 #define __TUI_H__
 #include <stdbool.h>
 #include "board.h"
+#define tui_NOT_A_COORD -1
 void tui_init();
 void tui_deinit();
 void tui_cls();
