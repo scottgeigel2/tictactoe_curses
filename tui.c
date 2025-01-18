@@ -115,7 +115,7 @@ void print_tile(int x, int y, const char tile[3][12], bool invert)
 }
 
 
-void tui_print_board(int coord, const char board[9]) {
+void tui_print_board(int coord, const Board *board) {
   int i, j;
   int x, y;
   int idx_base;
@@ -132,9 +132,9 @@ void tui_print_board(int coord, const char board[9]) {
       y = (i * 5) + 3;
       x = (j * 14) + 3;
       bool selected_tile = ((i * 3) + j) == coord;
-      if (board[idx_base] == 'O') {
+      if (board_get_idx(board, idx_base) == 'O') {
         print_tile(x, y, O_Tile, selected_tile);
-      } else if (board[idx_base] == 'X') {
+      } else if (board_get_idx(board, idx_base) == 'X') {
         print_tile(x, y, X_Tile, selected_tile);
       } else {
         print_tile(x, y, Empty_Tile, selected_tile);

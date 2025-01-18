@@ -6,7 +6,7 @@ CFLAGS  = -Wall -Wextra -O2
 TARGET  = myprogram
 
 # Source files
-SRCS    = main.c tui.c
+SRCS    = main.c tui.c board.c
 OBJS    = $(SRCS:.c=.o)
 
 # Default rule
