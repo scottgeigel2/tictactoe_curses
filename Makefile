@@ -3,7 +3,7 @@ CC      = cc
 CFLAGS  = -Wall -Wextra -O2
 
 # Target executable name
-TARGET  = myprogram
+TARGET  = tictactoe
 
 # Source files
 SRCS    = main.c tui.c board.c
