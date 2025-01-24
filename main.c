@@ -2,6 +2,14 @@
 #include "board.h"
 #include <stdbool.h>
 
+struct GameState
+{
+  int x;
+  int y;
+  bool selected;
+  int player;
+};
+
 char getPlayerMove() {
   char c = tui_read_char();
   while (c != 0) {
@@ -20,82 +28,106 @@ char getPlayerMove() {
   return c;
 }
 
+void make_move(struct GameState *state)
+{
+  bool play_made = false;
+  while (!play_made) {
+    char c = getPlayerMove();
+    if (c == 'j') {
+      if ((state->y + 1) >= 3) {
+        continue;
+      }
+      play_made = true;
+      state->y++;
+    }
+    if (c == 'k') {
+      if ((state->y - 1) < 0) {
+        continue;
+      }
+      play_made = true;
+      state->y--;
+    }
+    if (c == 'l') {
+      if ((state->x + 1) >= 3) {
+        continue;
+      }
+      play_made = true;
+      state->x++;
+    }
+    if (c == 'h') {
+      if ((state->x - 1) < 0) {
+        continue;
+      }
+      play_made = true;
+      state->x--;
+    }
+    if (c == ' ')
+    {
+      state->selected = true;
+      play_made = true;
+    }
+  }
+}
+
+void switch_player(struct GameState *state)
+{
+  state->player = (state->player + 1) % 2;
+}
+
+int get_coord(struct GameState *state)
+{
+  return (state->y * 3) + state->x;
+}
+
 int main() {
-  Board board;
+  struct GameState state = {.x = 0, .y =0, .selected = false, .player = 0};
+  Board meta_board;
+  Board boards[9];
   bool game_over = false;
-  int x = 0;
-  int y = 0;
-  int player = 0;
+
   tui_init();
-  board_init(&board);
+  board_init(&meta_board);
   while (!game_over) {
-    int coord = (y * 3) + x;
+    int coord = get_coord(&state);
     tui_cls();
-    tui_print_board(coord, &board);
-    tui_print_message(player ? "O's Turn" : "X's Turn");
+    tui_print_board(coord, &meta_board);
+    tui_print_message(state.player ? "O's Turn" : "X's Turn");
 
-    bool play_made = false;
-    while (!play_made) {
-      char c = getPlayerMove();
-      if (c == 'j') {
-        if ((y + 1) >= 3) {
-          continue;
-        }
-        play_made = true;
-        y++;
-      }
-      if (c == 'k') {
-        if ((y - 1) < 0) {
-          continue;
-        }
-        play_made = true;
-        y--;
-      }
-      if (c == 'l') {
-        if ((x + 1) >= 3) {
-          continue;
-        }
-        play_made = true;
-        x++;
-      }
-      if (c == 'h') {
-        if ((x - 1) < 0) {
-          continue;
-        }
-        play_made = true;
-        x--;
-      }
-      if (c == ' ') {
-        if (board_tile_available(&board, coord)) {
-          board_place_tile(&board, coord, player);
-          player = (player + 1) % 2;
-          play_made = true;
-        } else {
-          continue;
-        }
+    make_move(&state);
+    if (state.selected) {
+      if (board_tile_available(&meta_board, coord)) {
+        board_place_tile(&meta_board, coord, state.player);
+        switch_player(&state);
+      } else {
+        state.selected = false;
+        continue;
       }
     }
 
-    int status = board_is_winner(&board);
+    if (state.selected)
+    {
+      int status = board_is_winner(&meta_board);
 
-    if (status >= 0) {
-      game_over = true;
-      tui_cls();
-      tui_print_board(tui_NOT_A_COORD, &board);
+      if (status >= 0) {
+        game_over = true;
+        tui_cls();
+        tui_print_board(tui_NOT_A_COORD, &meta_board);
+      }
+      switch (status) {
+      case 2:
+        tui_print_message("Draw\n");
+        break;
+      case 1:
+        tui_print_message("O wins\n");
+        break;
+      case 0:
+        tui_print_message("X wins\n");
+        break;
+      default:
+        break;
+      }
     }
-    switch (status) {
-    case 2:
-      tui_print_message("Draw\n");
-      break;
-    case 1:
-      tui_print_message("O wins\n");
-      break;
-    case 0:
-      tui_print_message("X wins\n");
-      break;
-    default:
-      break;
-    }
+    state.selected = false;
   }
   tui_deinit();
 }
