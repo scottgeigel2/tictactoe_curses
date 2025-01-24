@@ -1,13 +1,11 @@
 #include "board.h"
 #include <string.h>
+// remove after debug vvvv
+#include <assert.h>
+#include <stdio.h>
+void board_init(Board *self) { memset(&self->board, ' ', 9); }
 
-void board_init(Board *self)
-{
-  memset(&self->board, ' ', 9);
-}
-
-void board_place_tile(Board *self, int coord, int player)
-{
+void board_place_tile(Board *self, int coord, int player) {
   self->board[coord] = player ? 'O' : 'X';
 }
 
@@ -37,7 +35,8 @@ int board_is_winner(const Board *self) {
     int b = winning_combinations[i][1];
     int c = winning_combinations[i][2];
 
-    if (self->board[a] != ' ' && self->board[a] == self->board[b] && self->board[b] == self->board[c]) {
+    if (self->board[a] != ' ' && self->board[a] == self->board[b] &&
+        self->board[b] == self->board[c]) {
       return self->board[a] == 'O' ? 1 : 0; // 1 for 'O', 0 for 'X'
     }
   }
@@ -57,8 +56,12 @@ int board_is_winner(const Board *self) {
   return -1; // No winner yet
 }
 
-char board_get_idx(const Board *self, int idx)
-{
+char board_get_idx(const Board *self, int idx) {
+  if (idx < 0 || idx >= 9) {
+    // reset terminal and cursor
+    printf("\033[2J\033[1;1H");
+    fprintf(stderr, "Invalid index: %d\n", idx);
+    assert(idx >= 0 && idx < 9);
+  }
   return self->board[idx];
 }
-

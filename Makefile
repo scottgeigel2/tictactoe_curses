@@ -1,12 +1,12 @@
 # Compiler and flags
 CC      = cc
-CFLAGS  = -Wall -Wextra -O2
+CFLAGS  = -Wall -Wextra #-O2
 
 # Target executable name
 TARGET  = tictactoe
 
 # Source files
-SRCS    = main.c tui.c board.c
+SRCS    = main.c tui.c board.c game.c
 OBJS    = $(SRCS:.c=.o)
 
 # Default rule
@@ -24,5 +24,5 @@ $(TARGET): $(OBJS)
 clean:
 	rm -f $(OBJS) $(TARGET)
 
-debug: CFLAGS += -g
+debug: CFLAGS += -g -O0 -fno-omit-frame-pointer -rdynamic
 debug: $(TARGET)
