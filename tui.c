@@ -1,4 +1,5 @@
 #include "tui.h"
+#include <stdarg.h>
 #include <unistd.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -47,8 +48,10 @@ const char Board_gfx[16][41] = {
 
 };
 
+static int x = 0;
+static int y = 20;
 
-struct termios _termios_backup;
+static struct termios _termios_backup;
 
 void tui_init()
 {
@@ -91,6 +94,7 @@ char tui_read_char()
 void tui_cls()
 {
 	puts("\033[2J\033[H"); // clear screen
+  y = 20;
 }
 
 void print_tile(int x, int y, const char tile[3][12], bool invert)
@@ -145,9 +149,13 @@ void tui_print_board(int coord, const Board *board) {
   }
 }
 
-void tui_print_message(const char *message) {
-  const int x = 0;
-  const int y = 20;
-  printf("\033[%d;%dH\033[K%s", y, x, message);
+void tui_print_message(const char *message, ...) {
+  va_list args;
+
+  va_start(args, message);
+  char buffer[80] = {0};
+  vsnprintf(buffer, 80, message, args);
+  printf("\033[%d;%dH\033[K%s", y, x, buffer);
+  y++;
 }
 

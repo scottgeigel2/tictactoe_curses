@@ -119,7 +119,7 @@ int main() {
   Board boards[9];
   Board *current_board = &meta_board;
   bool game_over = false;
-  char msg_buf[80] = {0};
+  int lol = 0;
 
   for (int i = 0; i < 9; i++) {
     board_init(&boards[i]);
@@ -130,9 +130,10 @@ int main() {
     int coord = get_coord(&state);
     tui_cls();
     tui_print_board(coord, current_board);
-    sprintf(msg_buf, "%s\tmeta %d current_board %p",state.player ? "O's Turn" : "X's Turn", state.meta_board, current_board);
+    tui_print_message("%s\tmeta %d current_board %p",state.player ? "O's Turn" : "X's Turn", state.meta_board, current_board);
+
     //tui_print_message(state.player ? "O's Turn" : "X's Turn");
-    tui_print_message(msg_buf);
+    tui_print_message("this is a test %d", lol++);
 
     make_move(&state);
     if (state.selected) {
@@ -149,8 +150,7 @@ int main() {
         }
       } else {
         state.selected = false;
-        sprintf(msg_buf, "tile %d not available", coord);
-        tui_print_message(msg_buf);
+        tui_print_message("tile %d not available", coord);
         tui_read_char();
         continue;
       }
@@ -161,7 +161,7 @@ int main() {
       int status = board_is_winner(current_board);
 
       if (status >= 0) {
-        game_over = true;
+        game_over = &meta_board == current_board;
         tui_cls();
         current_board = &meta_board;
         handle_game_end(&state, current_board, status, coord);
