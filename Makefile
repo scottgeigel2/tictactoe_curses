@@ -1,6 +1,6 @@
 # Compiler and flags
 CC      = cc
-CFLAGS  = -Wall -Wextra -O2
+CFLAGS  = -Wall -Wextra #-O2
 
 # Target executable name
 TARGET  = tictactoe
