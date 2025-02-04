@@ -126,6 +126,7 @@ int main() {
   }
   board_init(&meta_board);
   tui_init();
+  tui_small_mode();
   while (!game_over) {
     int coord = get_coord(&state);
     tui_cls();
