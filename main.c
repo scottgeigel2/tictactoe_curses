@@ -23,8 +23,9 @@ char getPlayerMove() {
     case ' ':
       return c;
     default:
-      continue;
+      ;
     }
+    c = tui_read_char();
   }
 
   return c;
@@ -136,6 +137,7 @@ int main() {
     //tui_print_message(state.player ? "O's Turn" : "X's Turn");
     tui_print_message("this is a test %d", lol++);
 
+    tui_read_char();
     make_move(&state);
     if (state.selected) {
       if (board_tile_available(current_board, coord)) {
