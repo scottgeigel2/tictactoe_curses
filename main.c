@@ -91,7 +91,10 @@ void handle_game_end(struct GameState *state, Board *current_board, int status, 
   } else {
     switch (status) {
         case 2:
-          //TODO: what do the rules say about draws?
+          current_board->board[coord] = '*'; // TODO: this feels wrong. i kind of didn't want to
+                                             // have a "mark stalemate" in Board... perhaps i'm
+                                             // overthinking it. or idk ... i could like make an
+                                             // extensions module for Board?
           break;
         case 1:
           board_place_tile(current_board, coord, state->player);
@@ -125,19 +128,27 @@ int main() {
   for (int i = 0; i < 9; i++) {
     board_init(&boards[i]);
   }
+
   board_init(&meta_board);
   tui_init();
-  tui_small_mode();
+
   while (!game_over) {
     int coord = get_coord(&state);
     tui_cls();
+    if (current_board == &meta_board)
+    {
+      tui_big_mode();
+    }
+    else
+    {
+      tui_small_mode();
+    }
     tui_print_board(coord, current_board);
     tui_print_message("%s\tmeta %d current_board %p",state.player ? "O's Turn" : "X's Turn", state.meta_board, current_board);
 
     //tui_print_message(state.player ? "O's Turn" : "X's Turn");
     tui_print_message("this is a test %d", lol++);
 
-    tui_read_char();
     make_move(&state);
     if (state.selected) {
       if (board_tile_available(current_board, coord)) {
@@ -146,10 +157,11 @@ int main() {
           state.meta_board = coord;
           current_board = &boards[coord];
           state.selected = false; //squash the selection to go into the meta boards
+          continue;
         }
         else {
           board_place_tile(current_board, coord, state.player);
-          switch_player(&state);
+          //switch_player(&state);
         }
       } else {
         state.selected = false;
@@ -167,15 +179,18 @@ int main() {
         game_over = &meta_board == current_board;
         tui_cls();
         current_board = &meta_board;
-        handle_game_end(&state, current_board, status, coord);
+        handle_game_end(&state, current_board, status, state.meta_board);
         tui_print_board(tui_NOT_A_COORD, current_board);
       }
       state.meta_board = -1;
       state.x = 0;
       state.y = 0;
       current_board = &meta_board;
+      switch_player(&state);
+
     }
     state.selected = false;
+
   }
   tui_deinit();
 }
