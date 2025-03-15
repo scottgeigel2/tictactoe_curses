@@ -11,14 +11,17 @@ void board_place_tile(Board *self, int coord, int player)
   self->board[coord] = player ? 'O' : 'X';
 }
 
-bool board_tile_available(const Board *self, int coord) {
-  if (coord >= 0 && coord < 10) {
+bool board_tile_available(const Board *self, int coord)
+{
+  if (coord >= 0 && coord < 10)
+  {
     return self->board[coord] == ' ';
   }
   return false;
 }
 
-int board_is_winner(const Board *self) {
+int board_is_winner(const Board *self)
+{
   // Winning combinations
   int winning_combinations[8][3] = {
       {0, 1, 2}, // Row 1
@@ -32,25 +35,30 @@ int board_is_winner(const Board *self) {
   };
 
   // Check for a winner
-  for (int i = 0; i < 8; i++) {
+  for (int i = 0; i < 8; i++)
+  {
     int a = winning_combinations[i][0];
     int b = winning_combinations[i][1];
     int c = winning_combinations[i][2];
 
-    if (self->board[a] != ' ' && self->board[a] == self->board[b] && self->board[b] == self->board[c]) {
+    if (self->board[a] != ' ' && self->board[a] == self->board[b] && self->board[b] == self->board[c])
+    {
       return self->board[a] == 'O' ? 1 : 0; // 1 for 'O', 0 for 'X'
     }
   }
   // Check for stalemate
   bool is_stalemate = true;
-  for (int i = 0; i < 9; i++) {
-    if (self->board[i] == ' ') {
+  for (int i = 0; i < 9; i++)
+  {
+    if (self->board[i] == ' ')
+    {
       is_stalemate = false;
       break;
     }
   }
 
-  if (is_stalemate) {
+  if (is_stalemate)
+  {
     return 2; // Stalemate
   }
 
@@ -61,4 +69,3 @@ char board_get_idx(const Board *self, int idx)
 {
   return self->board[idx];
 }
-

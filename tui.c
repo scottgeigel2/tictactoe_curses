@@ -7,8 +7,9 @@
 #include <assert.h> // TODO: this is being used for an assertion... consider an assertion header if
                     // we assert more
 
-//type defs
-enum e_tile {
+// type defs
+enum e_tile
+{
   e_tile_EMPTY_SMALL,
   e_tile_X_SMALL,
   e_tile_O_SMALL,
@@ -19,65 +20,61 @@ enum e_tile {
   e_tile_S_LARGE
 };
 
-
 // private variables
 struct termios set_no_echo();
 bool big_mode = true;
 bool debug_flag = false;
 // private functions
-void clear_no_echo(struct termios* oldt);
+void clear_no_echo(struct termios *oldt);
 bool e_tile_is_large(enum e_tile tile);
 
 // private globals
 const char X_Tile[3][7] = {
-{"\\\\  //"}, // \   /
-{" || ||"},  //  | |
-{"//  \\\\"}  // /   \
+    {"\\\\  //"}, // \   /
+    {" || ||"},   //  | |
+    {"//  \\\\"}  // /   \
 // this line intentionally left blank
 };
 
 const char O_Tile[3][7] = {
-{"/ -- \\"},  // / - \ .
-{"|    |"},   // |   |
-{"\\ -- /"}   // \ - /
+    {"/ -- \\"}, // / - \ .
+    {"|    |"},  // |   |
+    {"\\ -- /"}  // \ - /
 };
 
 const char Empty_Tile[3][7] = {
-{"......"},
-{"......"},
-{"......"}
-};
+    {"......"},
+    {"......"},
+    {"......"}};
 
 const char Stalemate_Tile[3][7] = {
-{"******"},
-{"******"},
-{"******"}
-};
-
+    {"******"},
+    {"******"},
+    {"******"}};
 
 const char SmallBoard_gfx[5][6] = {
-  {" | | "},
-  {"-----"},
-  {" | | "},
-  {"-----"},
-  {" | | "},
+    {" | | "},
+    {"-----"},
+    {" | | "},
+    {"-----"},
+    {" | | "},
 };
 
 const char Board_gfx[16][41] = {
-{"            ||            ||           "},
-{"            ||            ||           "},
-{"            ||            ||           "},
-{"____________||____________||___________"},
-{"____________||____________||___________"},
-{"            ||            ||           "},
-{"            ||            ||           "},
-{"            ||            ||           "},
-{"____________||____________||___________"},
-{"____________||____________||___________"},
-{"            ||            ||           "},
-{"            ||            ||           "},
-{"            ||            ||           "},
-{"            ||            ||           "},
+    {"            ||            ||           "},
+    {"            ||            ||           "},
+    {"            ||            ||           "},
+    {"____________||____________||___________"},
+    {"____________||____________||___________"},
+    {"            ||            ||           "},
+    {"            ||            ||           "},
+    {"            ||            ||           "},
+    {"____________||____________||___________"},
+    {"____________||____________||___________"},
+    {"            ||            ||           "},
+    {"            ||            ||           "},
+    {"            ||            ||           "},
+    {"            ||            ||           "},
 
 };
 
@@ -88,63 +85,63 @@ static struct termios _termios_backup;
 
 void tui_init()
 {
-	_termios_backup = set_no_echo();
+  _termios_backup = set_no_echo();
 }
 
 void tui_deinit()
 {
-	clear_no_echo(&_termios_backup);
+  clear_no_echo(&_termios_backup);
 }
 
 struct termios set_no_echo()
 {
-	struct termios oldt, newt;
+  struct termios oldt, newt;
 
-	// Get current terminal attributes
-	tcgetattr(STDIN_FILENO, &oldt);
-	newt = oldt;
+  // Get current terminal attributes
+  tcgetattr(STDIN_FILENO, &oldt);
+  newt = oldt;
 
-	// Disable canonical mode and echo
-	newt.c_lflag &= ~(ICANON | ECHO);
-	tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+  // Disable canonical mode and echo
+  newt.c_lflag &= ~(ICANON | ECHO);
+  tcsetattr(STDIN_FILENO, TCSANOW, &newt);
 
-	return oldt;
+  return oldt;
 }
 
-void clear_no_echo(struct termios* oldt)
+void clear_no_echo(struct termios *oldt)
 {
-	// Restore old terminal attributes
-	tcsetattr(STDIN_FILENO, TCSANOW, oldt);
+  // Restore old terminal attributes
+  tcsetattr(STDIN_FILENO, TCSANOW, oldt);
 }
 
 bool e_tile_is_large(enum e_tile tile)
 {
   switch (tile)
   {
-    case e_tile_EMPTY_SMALL:
-    case e_tile_X_SMALL:
-    case e_tile_O_SMALL:
-    case e_tile_S_SMALL:
-      return false;
-    case e_tile_EMPTY_LARGE:
-    case e_tile_X_LARGE:
-    case e_tile_O_LARGE:
-    case e_tile_S_LARGE:
-      return true;
-    default:
-      assert(false);
+  case e_tile_EMPTY_SMALL:
+  case e_tile_X_SMALL:
+  case e_tile_O_SMALL:
+  case e_tile_S_SMALL:
+    return false;
+  case e_tile_EMPTY_LARGE:
+  case e_tile_X_LARGE:
+  case e_tile_O_LARGE:
+  case e_tile_S_LARGE:
+    return true;
+  default:
+    assert(false);
   }
 }
 char tui_read_char()
 {
-	// Read a single character
-	char ch = getchar();
-	return ch;
+  // Read a single character
+  char ch = getchar();
+  return ch;
 }
 
 void tui_cls()
 {
-	puts("\033[2J\033[H"); // clear screen
+  puts("\033[2J\033[H"); // clear screen
   screen_y = 20;
 }
 
@@ -158,13 +155,12 @@ void tui_big_mode()
   big_mode = true;
 }
 
-
 void print_tile(int x, int y, enum e_tile tile_selection, bool invert)
 {
-	if (invert)
-	{
-		printf("\033[7m");
-	}
+  if (invert)
+  {
+    printf("\033[7m");
+  }
   if (e_tile_is_large(tile_selection))
   {
     for (int i = 0; i < 3; i++)
@@ -177,15 +173,15 @@ void print_tile(int x, int y, enum e_tile tile_selection, bool invert)
       {
         printf("\033[%d;%dH%s", y, x, X_Tile[i]);
       }
-      else if(tile_selection == e_tile_O_LARGE)
+      else if (tile_selection == e_tile_O_LARGE)
       {
         printf("\033[%d;%dH%s", y, x, O_Tile[i]);
       }
-      else if(tile_selection == e_tile_S_LARGE)
+      else if (tile_selection == e_tile_S_LARGE)
       {
         printf("\033[%d;%dH%s", y, x, Stalemate_Tile[i]);
       }
-      else //empty
+      else // empty
       {
         printf("\033[%d;%dH%s", y, x, Empty_Tile[i]);
       }
@@ -196,45 +192,43 @@ void print_tile(int x, int y, enum e_tile tile_selection, bool invert)
   {
     if (tile_selection == e_tile_X_SMALL)
     {
-        printf("\033[%d;%dHX", y, x);
+      printf("\033[%d;%dHX", y, x);
     }
     else if (tile_selection == e_tile_O_SMALL)
     {
-        printf("\033[%d;%dHO", y, x);
+      printf("\033[%d;%dHO", y, x);
     }
     else if (tile_selection == e_tile_S_SMALL)
     {
-        printf("\033[%d;%dH*", y, x);
+      printf("\033[%d;%dH*", y, x);
     }
-    else //empty
+    else // empty
     {
-        printf("\033[%d;%dH.", y, x);
+      printf("\033[%d;%dH.", y, x);
     }
   }
-	if (invert)
-	{
-		printf("\033[0m");
-	}
-
+  if (invert)
+  {
+    printf("\033[0m");
+  }
 }
 
-
-void tui_print_board(int coord, const Board *board) {
-  char debug_buf [120];
+void tui_print_board(int coord, const Board *board)
+{
+  char debug_buf[120];
   char *p_debug_buf = debug_buf;
   int i, j;
   int x = 1, y = 1;
   int idx_base;
-  int tile_width, tile_height; // TODO: width has so much space padding.... why not height?
+  int tile_width, tile_height;                 // TODO: width has so much space padding.... why not height?
   int board_border_width, board_border_height; // TODO: currently much justification to have these separate,
                                                // but maybe one day i'll have a border who's height is not
                                                // equal to its width
-  int tile_padding_left, tile_padding_right; // TODO: effectively the same number ATM, but maybe one
-                                             // day I might need this? if not, just change it to a
-                                             // simple padding var
+  int tile_padding_left, tile_padding_right;   // TODO: effectively the same number ATM, but maybe one
+                                               // day I might need this? if not, just change it to a
+                                               // simple padding var
 
-  //TODO: also IDK, maybe vertical padding????
-
+  // TODO: also IDK, maybe vertical padding????
 
   enum e_tile e_xtile, e_otile, e_stalemate_tile, e_empty_tile;
 
@@ -268,7 +262,8 @@ void tui_print_board(int coord, const Board *board) {
   printf("\033[%d;%dH", x, y);
   if (big_mode)
   {
-    for (i = 0; i < 16; i++) {
+    for (i = 0; i < 16; i++)
+    {
       puts(Board_gfx[i]);
     }
   }
@@ -281,21 +276,30 @@ void tui_print_board(int coord, const Board *board) {
   }
 
   debug_flag = false;
-  for (i = 0; i < 3; i++) {
+  for (i = 0; i < 3; i++)
+  {
     idx_base = 3 * i;
 
     x = 1 + tile_padding_left;
-    for (j = 0; j < 3; j++, idx_base++) {
+    for (j = 0; j < 3; j++, idx_base++)
+    {
       p_debug_buf += sprintf(p_debug_buf, "(%d %d)\t", x, y);
 
       bool selected_tile = ((i * 3) + j) == coord;
-      if (board_get_idx(board, idx_base) == 'O') {
+      if (board_get_idx(board, idx_base) == 'O')
+      {
         print_tile(x, y, e_otile, selected_tile);
-      } else if (board_get_idx(board, idx_base) == 'X') {
+      }
+      else if (board_get_idx(board, idx_base) == 'X')
+      {
         print_tile(x, y, e_xtile, selected_tile);
-      } else if (board_get_idx(board, idx_base) == '*') {
+      }
+      else if (board_get_idx(board, idx_base) == '*')
+      {
         print_tile(x, y, e_stalemate_tile, selected_tile);
-      } else {
+      }
+      else
+      {
         print_tile(x, y, e_empty_tile, selected_tile);
       }
       x += tile_width + board_border_width;
@@ -306,7 +310,8 @@ void tui_print_board(int coord, const Board *board) {
   tui_print_message(debug_buf);
 }
 
-void tui_print_message(const char *message, ...) {
+void tui_print_message(const char *message, ...)
+{
   va_list args;
 
   va_start(args, message);
@@ -315,4 +320,3 @@ void tui_print_message(const char *message, ...) {
   printf("\033[%d;%dH\033[K%s", screen_y, screen_x, buffer);
   screen_y++;
 }
-
