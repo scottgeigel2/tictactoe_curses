@@ -29,25 +29,33 @@ void clear_no_echo(struct termios *oldt);
 bool e_tile_is_large(enum e_tile tile);
 
 // private globals
-const char X_Tile[3][7] = {
+const char X_Tile[5][7] = {
     {"\\\\  //"}, // \   /
-    {" || ||"},   //  | |
+    {" \\\\// "},   //  | |
+    {"  ||  "},   //  | |
+    {" //\\\\"},   //  | |
     {"//  \\\\"}  // /   \
 // this line intentionally left blank
 };
 
-const char O_Tile[3][7] = {
+const char O_Tile[5][7] = {
     {"/ -- \\"}, // / - \ .
+    {"|    |"},  // |   |
+    {"|    |"},  // |   |
     {"|    |"},  // |   |
     {"\\ -- /"}  // \ - /
 };
 
-const char Empty_Tile[3][7] = {
+const char Empty_Tile[5][7] = {
+    {"......"},
+    {"......"},
     {"......"},
     {"......"},
     {"......"}};
 
-const char Stalemate_Tile[3][7] = {
+const char Stalemate_Tile[5][7] = {
+    {"******"},
+    {"******"},
     {"******"},
     {"******"},
     {"******"}};
@@ -60,12 +68,9 @@ const char SmallBoard_gfx[5][6] = {
     {" | | "},
 };
 
-const char Board_gfx[16][41] = {
+const char Board_gfx[20][40] = {
     {"            ||            ||           "},
     {"            ||            ||           "},
-    {"            ||            ||           "},
-    {"____________||____________||___________"},
-    {"____________||____________||___________"},
     {"            ||            ||           "},
     {"            ||            ||           "},
     {"            ||            ||           "},
@@ -75,7 +80,15 @@ const char Board_gfx[16][41] = {
     {"            ||            ||           "},
     {"            ||            ||           "},
     {"            ||            ||           "},
-
+    {"            ||            ||           "},
+    {"____________||____________||___________"},
+    {"____________||____________||___________"},
+    {"            ||            ||           "},
+    {"            ||            ||           "},
+    {"            ||            ||           "},
+    {"            ||            ||           "},
+    {"            ||            ||           "},
+    {"            ||            ||           "},
 };
 
 static int screen_x = 0;
@@ -163,7 +176,7 @@ void print_tile(int x, int y, enum e_tile tile_selection, bool invert)
   }
   if (e_tile_is_large(tile_selection))
   {
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 5; i++)
     {
       if (false && !debug_flag)
       {
@@ -239,7 +252,7 @@ void tui_print_board(int coord, const Board *board)
     e_stalemate_tile = e_tile_S_LARGE;
     e_empty_tile = e_tile_EMPTY_LARGE;
     tile_width = 12;
-    tile_height = 3;
+    tile_height = 5;
     board_border_width = 2;
     board_border_height = 2;
     tile_padding_left = 3;
@@ -262,7 +275,7 @@ void tui_print_board(int coord, const Board *board)
   printf("\033[%d;%dH", x, y);
   if (big_mode)
   {
-    for (i = 0; i < 16; i++)
+    for (i = 0; i < 21; i++)
     {
       puts(Board_gfx[i]);
     }
