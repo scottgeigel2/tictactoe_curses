@@ -179,12 +179,35 @@ int main()
           state.meta_board = coord;
           current_board = &boards[coord];
           state.selected = false; // squash the selection to go into the meta boards
-          continue;
         }
         else
         {
           board_place_tile(current_board, coord, state.player);
           // switch_player(&state);
+          int status = board_is_winner(current_board);
+
+          if (status >= 0)
+          {
+            game_over = &meta_board == current_board;
+            tui_cls();
+            current_board = &meta_board;
+            handle_game_end(&state, current_board, status, state.meta_board);
+            tui_print_board(tui_NOT_A_COORD, current_board);
+          }
+          if (board_tile_available(&meta_board, coord))
+          {
+            state.meta_board = coord;
+            current_board = &boards[coord];
+          }
+          else
+          {
+            state.meta_board = -1;
+            state.x = 0;
+            state.y = 0;
+            current_board = &meta_board;
+          }
+          switch_player(&state);
+          state.selected = false;
         }
       }
       else
@@ -192,29 +215,9 @@ int main()
         state.selected = false;
         tui_print_message("tile %d not available", coord);
         tui_read_char();
-        continue;
       }
     }
 
-    if (state.selected)
-    {
-      int status = board_is_winner(current_board);
-
-      if (status >= 0)
-      {
-        game_over = &meta_board == current_board;
-        tui_cls();
-        current_board = &meta_board;
-        handle_game_end(&state, current_board, status, state.meta_board);
-        tui_print_board(tui_NOT_A_COORD, current_board);
-      }
-      state.meta_board = -1;
-      state.x = 0;
-      state.y = 0;
-      current_board = &meta_board;
-      switch_player(&state);
-    }
-    state.selected = false;
   }
   tui_deinit();
 }
