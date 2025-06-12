@@ -9,7 +9,8 @@ void tui_deinit();
 void tui_cls();
 void tui_small_mode();
 void tui_big_mode();
-void tui_print_board(int coord, const Board *board);
+void tui_print_board(int coord, int subCoord, const Board *board);
 char tui_read_char();
 void tui_print_message(const char *message, ...);
+void tui_debug();
 #endif

@@ -30,20 +30,20 @@ bool e_tile_is_large(enum e_tile tile);
 
 // private globals
 const char X_Tile[5][7] = {
-    {"\\\\  //"}, // \   /
-    {" \\\\// "},   //  | |
-    {"  ||  "},   //  | |
-    {" //\\\\"},   //  | |
-    {"//  \\\\"}  // /   \
+    {"\\\\  //"},
+    {" \\\\// "},
+    {"  ||  "},
+    {" //\\\\ "},
+    {"//  \\\\"}
 // this line intentionally left blank
 };
 
 const char O_Tile[5][7] = {
-    {"/ -- \\"}, // / - \ .
-    {"|    |"},  // |   |
-    {"|    |"},  // |   |
-    {"|    |"},  // |   |
-    {"\\ -- /"}  // \ - /
+    {"/ -- \\"},
+    {"|    |"},
+    {"|    |"},
+    {"|    |"},
+    {"\\ -- /"}
 };
 
 const char Empty_Tile[5][7] = {
@@ -226,7 +226,7 @@ void print_tile(int x, int y, enum e_tile tile_selection, bool invert)
   }
 }
 
-void tui_print_board(int coord, const Board *board)
+void tui_print_board(int coord, int subCoord, const Board *board)
 {
   char debug_buf[120];
   char *p_debug_buf = debug_buf;
@@ -332,4 +332,33 @@ void tui_print_message(const char *message, ...)
   vsnprintf(buffer, 80, message, args);
   printf("\033[%d;%dH\033[K%s", screen_y, screen_x, buffer);
   screen_y++;
+}
+
+
+void tui_debug()
+{
+  tui_cls();
+  //printf("wut\n");
+  print_tile(0, 1, e_tile_X_LARGE, false);
+  tui_read_char();
+  print_tile(10, 1, e_tile_X_LARGE, false);
+  tui_read_char();
+  print_tile(20, 1, e_tile_X_LARGE, false);
+
+  print_tile(0, 10, e_tile_O_LARGE, false);
+  tui_read_char();
+  print_tile(10, 10, e_tile_O_LARGE, false);
+  tui_read_char();
+  print_tile(20, 10, e_tile_O_LARGE, false);
+
+  print_tile(0, 30, e_tile_X_LARGE, false);
+  tui_read_char();
+  print_tile(10, 30, e_tile_X_LARGE, false);
+  tui_read_char();
+  print_tile(20, 30, e_tile_X_LARGE, false);
+
+ //printf("huh\n");
+
+  tui_read_char();
+
 }

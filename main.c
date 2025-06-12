@@ -150,6 +150,7 @@ int main()
   board_init(&meta_board);
   tui_init();
 
+  tui_debug();
   while (!game_over)
   {
     int coord = get_coord(&state);
