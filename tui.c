@@ -273,20 +273,17 @@ void tui_print_board(int coord, int subCoord, const Board *board)
   }
 
   printf("\033[%d;%dH", x, y);
-  if (big_mode)
+  for (i = 0; i < 21; i++)
   {
-    for (i = 0; i < 21; i++)
-    {
-      puts(Board_gfx[i]);
-    }
+    puts(Board_gfx[i]);
   }
-  else
-  {
-    for (i = 0; i < 5; i++)
-    {
-      puts(SmallBoard_gfx[i]);
-    }
-  }
+//  else
+//  {
+//    for (i = 0; i < 5; i++)
+//    {
+//      puts(SmallBoard_gfx[i]);
+//    }
+//  }
 
   debug_flag = false;
   for (i = 0; i < 3; i++)
@@ -299,6 +296,13 @@ void tui_print_board(int coord, int subCoord, const Board *board)
       p_debug_buf += sprintf(p_debug_buf, "(%d %d)\t", x, y);
 
       bool selected_tile = ((i * 3) + j) == coord;
+
+      printf("\033[%d;%dH", x, y);
+      for (int sb = 0; sb < 5; sb++)
+      {
+        puts(SmallBoard_gfx[sb]);
+      }
+
       if (board_get_idx(board, idx_base) == 'O')
       {
         print_tile(x, y, e_otile, selected_tile);

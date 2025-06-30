@@ -163,7 +163,7 @@ int main()
     {
       tui_small_mode();
     }
-    tui_print_board(coord, current_board);
+    tui_print_board(coord, 2, current_board);
     tui_print_message("%s\tmeta %d current_board %p", state.player ? "O's Turn" : "X's Turn", state.meta_board, current_board);
 
     // tui_print_message(state.player ? "O's Turn" : "X's Turn");
@@ -193,7 +193,7 @@ int main()
             tui_cls();
             current_board = &meta_board;
             handle_game_end(&state, current_board, status, state.meta_board);
-            tui_print_board(tui_NOT_A_COORD, current_board);
+            tui_print_board(tui_NOT_A_COORD, tui_NOT_A_COORD, current_board);
           }
           if (board_tile_available(&meta_board, coord))
           {
