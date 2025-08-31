@@ -49,8 +49,13 @@ bool game_cursor(struct GameState *game, enum e_direction dir) {
       } else {
         board_place_tile(&game->boards[game->meta_idx], get_coord(game),
                          game->player);
-        if (board_is_winner(&game->boards[game->meta_idx]) != -1) {
-          board_place_tile(&game->meta_board, game->meta_idx, game->player);
+        int outcome = board_is_winner(&game->boards[game->meta_idx]);
+        if (outcome != -1) {
+          if (outcome == 2) {
+            board_place_stalemate(&game->meta_board, game->meta_idx);
+          } else {
+            board_place_tile(&game->meta_board, game->meta_idx, game->player);
+          }
         }
 
         if (board_tile_available(&game->meta_board, get_coord(game))) {

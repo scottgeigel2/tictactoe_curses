@@ -1,6 +1,6 @@
 #include "tui.h"
 #include "board.h"
-#include <assert.h> // TODO: this is being used for an assertion... consider an assertion header if
+#include <assert.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <termios.h>
@@ -28,8 +28,7 @@ void clear_no_echo(struct termios *oldt);
 bool e_tile_is_large(enum e_tile tile);
 void tui_set_cursor(int x, int y);
 void print_small_board(const struct GameState *game, const Board *board,
-                       int base_x, int base_y, bool this_board_is_selected,
-                       bool this_board_is_hovered);
+                       int base_x, int base_y, bool this_board_is_hovered);
 // private globals
 const char X_Tile[5][7] = {
     {"\\\\  //"}, {" \\\\// "}, {"  ||  "}, {" //\\\\ "}, {"//  \\\\"}
@@ -212,14 +211,11 @@ void print_meta_board(const struct GameState *game) {
       } else if (board_get_idx(&game->meta_board, idx_base) == '*') {
         print_tile(x, y, e_stalemate_tile, meta_tile_hover);
       } else {
-        bool tile_selected =
-            (game->meta_idx != -1) && ((i * 3) + j) == selected_tile;
         if (meta_tile_hover) {
           printf("\033[7m");
         }
         print_tile(x, y, e_empty_tile, meta_tile_hover);
-        print_small_board(game, &game->boards[idx_base], x, y, tile_selected,
-                          meta_tile_hover);
+        print_small_board(game, &game->boards[idx_base], x, y, meta_tile_hover);
         if (meta_tile_hover) {
           printf("\033[0m");
         }
@@ -231,8 +227,7 @@ void print_meta_board(const struct GameState *game) {
 }
 
 void print_small_board(const struct GameState *game, const Board *board,
-                       int base_x, int base_y, bool this_board_is_selected,
-                       bool this_board_is_hovered) {
+                       int base_x, int base_y, bool this_board_is_hovered) {
   int i, j;
   int x = base_x, y = base_y;
   int idx_base;
@@ -255,9 +250,7 @@ void print_small_board(const struct GameState *game, const Board *board,
   tile_height = 1;
   board_border_width = 1;
   board_border_height = 1;
-  //  if (selected_tile) {
-  //    printf("\033[7m");
-  //  }
+
   bool this_board_is_being_played =
       game->meta_idx != -1 && (game->meta_idx == (board - game->boards));
   idx_base = 0;
@@ -282,10 +275,8 @@ void print_small_board(const struct GameState *game, const Board *board,
     }
     y += tile_height + board_border_height;
   }
-  //  if (selected_tile) {
-  //    printf("\033[0m");
-  //  }
 }
+
 void tui_print_game(const struct GameState *game) {
   int i;
   int x = 2, y = 1;

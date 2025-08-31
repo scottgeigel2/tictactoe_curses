@@ -98,7 +98,6 @@ int main() {
       .x = 0, .y = 0, .selected = false, .player = 0, .meta_idx = -1};
   bool game_over = false;
   int game_status;
-  int lol = 0;
 
   for (int i = 0; i < 9; i++) {
     board_init(&state.boards[i]);
@@ -112,11 +111,8 @@ int main() {
     bool this_player_was_meta = state.meta_idx != -1;
     tui_cls();
     tui_print_game(&state);
-    tui_print_message("%s\tmeta %d current_board %p",
-                      state.player ? "O's Turn" : "X's Turn", state.meta_idx);
 
-    // tui_print_message(state.player ? "O's Turn" : "X's Turn");
-    tui_print_message("this is a test %d", lol++);
+    tui_print_message(state.player ? "O's Turn\n" : "X's Turn\n");
 
     bool select_move = make_move(&state);
     game_status = board_is_winner(&state.meta_board);
@@ -124,45 +120,10 @@ int main() {
     if (!game_over && (select_move && this_player_was_meta)) {
       switch_player(&state);
     }
-    // if (game_tile_available(&state)) {
-    //   if (state.meta_idx == -1) {
-    //     // we need to go deeper
-    //     state.meta_idx = coord;
-    //     current_board = &boards[coord];
-    //     state.selected =
-    //         false; // squash the selection to go into the meta boards
-    //   } else {
-    //     board_place_tile(current_board, coord, state.player);
-    //     // switch_player(&state);
-    //     int status = board_is_winner(current_board);
-    //
-    //     if (status >= 0) {
-    //       game_over = &meta_board == current_board;
-    //       tui_cls();
-    //       current_board = &meta_board;
-    //       handle_game_end(&state, current_board, status, state.meta_idx);
-    //       tui_print_board(tui_NOT_A_COORD, tui_NOT_A_COORD, current_board);
-    //     }
-    //     if (board_tile_available(&meta_board, coord)) {
-    //       state.meta_idx = coord;
-    //       current_board = &boards[coord];
-    //     } else {
-    //       state.meta_idx = -1;
-    //       state.x = 0;
-    //       state.y = 0;
-    //       current_board = &meta_board;
-    //     }
-    //     switch_player(&state);
-    //     state.selected = false;
-    //   }
-    // } else {
-    //   state.selected = false;
-    //   tui_print_message("tile %d not available", coord);
-    //   tui_read_char();
-    // }
   }
   tui_cls();
   tui_print_game(&state);
+  handle_game_end(&state, &state.meta_board, game_status, -1);
   tui_print_message("Game Over!!!");
   tui_deinit();
 }

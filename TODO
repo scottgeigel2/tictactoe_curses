@@ -7,9 +7,5 @@ add a backspace to send the player back to the meta board (if a legal move)
 perhaps make the character press a key to view the meta inner board with their move before
 progressing to the meta board
 
-or even better, draw a minature tic tac toe game on the meta board
-
-in the status bard, print what meta game is selected
-
 draw a cool border around the status messages?
 maybe a heading/title bar?

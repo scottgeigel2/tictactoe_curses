@@ -9,6 +9,8 @@ void board_place_tile(Board *self, int coord, int player) {
   self->board[coord] = player ? 'O' : 'X';
 }
 
+void board_place_stalemate(Board *self, int coord) { self->board[coord] = 'S'; }
+
 bool board_tile_available(const Board *self, int coord) {
   if (coord >= 0 && coord < 10) {
     return self->board[coord] == ' ';
